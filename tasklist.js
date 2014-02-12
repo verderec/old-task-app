@@ -5,7 +5,7 @@ var taskList = function taskList (spec) {
 
     name: spec.name || 'Task List',
     
-    tasks: spec.tasks || [],
+    tasks: [],
 
     add: function add (task) {
       var newlen = that.tasks.push(task);
@@ -53,7 +53,7 @@ var taskList = function taskList (spec) {
   if (localItems) {
     tmpTasks = JSON.parse(localItems);
     if (tmpTasks instanceof Array) {
-      that.tasks.concat(tmpTasks);
+      that.tasks = tmpTasks;
     }
   }
 
