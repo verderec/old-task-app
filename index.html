@@ -45,7 +45,7 @@
                 }
               };
           
-          [ "task #1", "task #2" ].forEach(addTask);
+          tasks.forEach(displayTask);
 
           $( '#add' ).on("click", function () {
             var task = $('#task').val();
