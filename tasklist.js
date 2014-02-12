@@ -57,17 +57,13 @@ var taskList = function taskList (spec) {
     }
   }
 
-  console.log('found',spec.tasks.length,'tasks');
-
   if (typeof Array.prototype.forEach === 'function') {
     // real browser, or IE >=9
-    console.log('using Array.prototype.forEach');
     that.forEach = function forEach (fn) {
       that.tasks.forEach(fn);
     };
   } else {
     // last resort - fake it
-    console.log('using local forEach');
     that.forEach = function forEach (fn) {
       var len = that.tasks.length,
           i = 0;
