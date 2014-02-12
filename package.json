@@ -1,0 +1,23 @@
+{
+  "name": "task-app",
+  "version": "0.0.0",
+  "description": "demo task app",
+  "main": "node-tasklist.js",
+  "dependencies": {
+    "node-localstorage": "~0.3.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/scs-cs-50/task-app.git"
+  },
+  "author": "Scotty Logan <swl@stanford.edu>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/scs-cs-50/task-app/issues"
+  },
+  "homepage": "https://github.com/scs-cs-50/task-app"
+}
