@@ -9,11 +9,13 @@ var taskList = function taskList (spec) {
 
     add: function add (task) {
       var newlen = that.tasks.push(task);
+      localStorage.setItem(that.name, JSON.stringify(that.tasks));
       return (newlen - 1); // index of new entry
     },
   
     remove: function remove (taskId) {
       var removed = that.tasks.splice(taskId, 1);
+      localStorage.setItem(that.name, JSON.stringify(that.tasks));
       return (removed.length > 0) ? true: false;
     },
 
@@ -44,7 +46,18 @@ var taskList = function taskList (spec) {
         return that.tasks.filter(function (task) { return pattern.test(task); });
       }
     }
-  };
+  },
+  localItems = localStorage.getItem(that.name),
+  tmpTasks;
+
+  if (localItems) {
+    tmpTasks = JSON.parse(localItems);
+    if (tmpTasks instanceof Array) {
+      that.tasks.concat(tmpTasks);
+    }
+  }
+
+  console.log('found',spec.tasks.length,'tasks');
 
   if (typeof Array.prototype.forEach === 'function') {
     // real browser, or IE >=9
