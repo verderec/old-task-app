@@ -52,14 +52,6 @@ var taskList = function taskList (spec) {
     that.forEach = function forEach (fn) {
       that.tasks.forEach(fn);
     };
-  } else if ($ && typeof $.each === 'function') {
-    // we have jQuery
-    console.log('using jQuery.each');
-    that.forEach = function forEach (fn) {
-      $.each(that.tasks, function (i, el) {
-        fn.call(void 0, that.tasks[i], i, that.tasks);
-      });
-    };
   } else {
     // last resort - fake it
     console.log('using local forEach');
