@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport"
+      content="initial-scale=1.0,width=device-width,user-scalable=yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title></title>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.css">
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src='tasklist.js'></script>
+    <script>
+        $( document ).on("pagecreate", "#task-page", function() {
+          var tasks = taskList(),
+              addTask = function addTask (task) {
+                var taskId = tasks.add(task);
+                $('#tasklist').append(
+                  [
+                    '<li id="', taskId, '">',
+                    '<a href="#">',
+                    task,
+                    '</a>',
+                    '<a href="#" class="delete">',
+                    'Delete',
+                    '</a>',
+                    '</li>'
+                  ].join('')
+                );
+                $('#' + taskId + ' .delete').on( "click", function () {
+                  removeTask($(this).parent('li'));
+                });
+                $('#tasklist').listview('refresh');
+              },
+              
+              removeTask = function removeTask (taskItem) {
+                var taskId = taskItem.attr("id");
+                
+                if (tasks.remove(taskId)) {
+                  taskItem.remove();
+                  $('#tasklist').listview('refresh');
+                }
+              };
+          
+          [ "task #1", "task #2" ].forEach(addTask);
+
+          $( '#add' ).on("click", function () {
+            var task = $('#task').val();
+            addTask(task);
+            $( '#task' ).val('');
+          });
+
+          // Click delete split-button to remove list item
+          /*
+  				$( ".delete" ).on( "click", function() {
+            removeTask($( this ).parent( "li" ));
+          });
+          */
+        });
+        
+
+    </script>
+    <script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
+  </head>
+
+  <body>
+
+    <div id="task-page" data-role="page">
+      <div data-role='header' data-nobackbtn='true'>
+        <h1>Live Fire!</h1>
+      </div>
+
+      <div data-role="content">
+
+        <ul id="tasklist" class="touch" data-role="listview" data-icon="false" data-split-icon="delete">
+        </ul>
+
+        <br/>
+          
+        <form action='#'>
+
+          <fieldset>
+            <div class="ui-field-contain">
+              <label for="task">Add Task</label>
+              <input type="text" name="task" id="task" value=""
+                placeholder="Your new task"
+                data-clear-btn="true"
+                />
+            </div>
+          </fieldset>
+          
+          <div class="ui-btn ui-input-btn ui-shadow">
+            Add
+            <input id="add" type="button"
+              data-corners="false"
+              data-enhanced="true"
+              value="Add">
+            </input>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </body>
+</html>
