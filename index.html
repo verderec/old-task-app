@@ -14,6 +14,10 @@
           var tasks = taskList(),
               addTask = function addTask (task) {
                 var taskId = tasks.add(task);
+                displayTask(task, taskId);
+              },
+
+              displayTask = function displayTask (task, taskId) {
                 $('#tasklist').append(
                   [
                     '<li id="', taskId, '">',
@@ -31,7 +35,7 @@
                 });
                 $('#tasklist').listview('refresh');
               },
-              
+
               removeTask = function removeTask (taskItem) {
                 var taskId = taskItem.attr("id");
                 
