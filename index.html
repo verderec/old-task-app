@@ -47,6 +47,11 @@
                 }
               };
           
+
+          $("form :input").on("keypress", function(e) {
+              return e.keyCode != 13;
+          });
+
           tasks.forEach(displayTask);
 
           $( '#add' ).on("click", function () {
@@ -73,12 +78,13 @@
 
       <div data-role="content">
 
-	<form>
-	  <input type="text" data-type="search" id="filterable-tasklist">
-	</form>
-
+	      <form>
+          <input type="text" data-type="search" id="filterable-tasklist">
+        </form>
 	
-        <ul id="tasklist" class="touch" data-role="listview" data-filter="true" data-input="#filterable-tasklist" data-icon="false" data-split-icon="delete">
+        <ul id="tasklist" class="touch" data-role="listview"
+            data-filter="true" data-input="#filterable-tasklist"
+            data-icon="false" data-split-icon="delete">
         </ul>
 
         <hr/>
