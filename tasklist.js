@@ -7,6 +7,12 @@ var taskList = function taskList (spec) {
     
     tasks: [],
 
+    clearAll: function clearAll () {
+      localStorage.clear();
+      that.tasks = [];
+      return [];
+    },
+    
     add: function add (task) {
       var newlen = that.tasks.push(task);
       localStorage.setItem(that.name, JSON.stringify(that.tasks));
@@ -43,12 +49,16 @@ var taskList = function taskList (spec) {
       if (! pattern instanceof RegExp) {
         return [];
       } else {
-        return that.tasks.filter(function (task) { return pattern.test(task); });
+        return that.tasks.filter(function (task) {
+          return pattern.test(task.name) || pattern.test(task.details);
+        });
       }
     }
   },
   localItems = localStorage.getItem(that.name),
   tmpTasks;
+
+  localStorage.setItem(that.name + ' [VERSION]', 1);
 
   if (localItems) {
     tmpTasks = JSON.parse(localItems);
@@ -72,7 +82,7 @@ var taskList = function taskList (spec) {
         throw new TypeError();
       }
 
-      for (; i < len; i++) {
+      for ( ; i < len; i++) {
         fn.call(void 0, that.tasks[i], i, that.tasks);
       }
     };
