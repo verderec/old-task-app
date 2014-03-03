@@ -26,45 +26,57 @@
 
       <div data-role="content">
 
-	      <form>
-          <input type="text" data-type="search" id="filterable-tasklist">
-        </form>
+				<div class="ui-corner-all custom-corners">
+				  <div class="ui-body ui-body-a">
+						<form>
+							<input type="text" data-type="search" id="filterable-tasklist">
+						</form>
+					</div>
+				</div>
 	
-        <ul id="tasklist" class="touch" data-role="listview"
-            data-filter="true" data-input="#filterable-tasklist"
-            data-icon="false" data-split-icon="delete">
+				<ul id="tasklist" data-role="listview" data-count-theme="b" data-inset="true"
+            data-filter="true" data-input="#filterable-tasklist">
         </ul>
 
-        <hr/>
           
-        <form action='#'>
+				<div class="ui-corner-all custom-corners">
+				  <div class="ui-bar ui-bar-a">
+				    <h3>Add Task</h3>
+				  </div>
+				  <div class="ui-body ui-body-a">
 
-					<ul data-role="listview" data-inset="true">
+		        <form action='#'>
 
-            <li class="ui-field-contain">
-              <label for="task">Name:</label>
-              <input type="text" name="taskname" id="taskname" value=""
-                placeholder="Your new task"
-                data-clear-btn="true"
-                />
-						</li>
-						<li class="ui-field-contain">
-              <label for="taskdetails">Details:</label>
-              <textarea name="taskdetails" id="taskdetails"
-								cols="40" rows="4">
-							</textarea>
-						</li>
+							<ul data-role="listview" data-inset="true">
 
-		        <li class="ui-body ui-body-b">
-		            <fieldset class="ui-grid-a">
-		                    <div class="ui-block-a"><button id="cancel" type="submit" class="ui-btn ui-corner-all ui-btn-c">Cancel</button></div>
-		                    <div class="ui-block-b"><button id="add" type="submit" class="ui-btn ui-corner-all ui-btn-b">Add</button></div>
-		            </fieldset>
-		        </li>
+		            <li class="ui-field-contain">
+		              <label for="task">Name:</label>
+		              <input type="text" name="taskname" id="taskname" value=""
+		                placeholder="Your new task"
+		                data-clear-btn="true"
+		                />
+								</li>
+								<li class="ui-field-contain">
+		              <label for="taskdetails">Details:</label>
+		              <textarea name="taskdetails" id="taskdetails"
+										cols="40" rows="4"></textarea>
+								</li>
 
-					</ul>
+				        <li class="ui-body ui-body-b">
+				            <fieldset class="ui-grid-a">
+				                    <div class="ui-block-a"><a href='#' id="cancel" class="ui-btn ui-corner-all ui-btn-c">Cancel</a></div>
+				                    <div class="ui-block-b"><a href='#' id="add"    class="ui-btn ui-corner-all ui-btn-b">Add</a></div>
+				            </fieldset>
+				        </li>
 
-        </form>
+							</ul>
+
+		        </form>
+
+				  </div>
+				</div>
+
+
       </div>
     </div>
 
