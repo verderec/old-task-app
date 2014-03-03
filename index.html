@@ -22,7 +22,9 @@
                   [
                     '<li id="', taskId, '">',
                     '<a href="#">',
-                    task,
+                    task.name,
+                    '<br/>',
+                    task.details,
                     '</a>',
                     '<a href="#" class="delete">',
                     'Delete',
@@ -45,12 +47,19 @@
                 }
               };
           
+
+          $("form :input").on("keypress", function(e) {
+              return e.keyCode != 13;
+          });
+
           tasks.forEach(displayTask);
 
           $( '#add' ).on("click", function () {
-            var task = $('#task').val();
-            addTask(task);
-            $( '#task' ).val('');
+            var taskname = $('#taskname').val(),
+                taskdetails = $('#taskdetails').val();
+            addTask({ name: taskname, details: taskdetails });
+            $( '#taskname' ).val('');
+            $( '#taskdetails' ).val('');
           });
 
         });
@@ -69,23 +78,28 @@
 
       <div data-role="content">
 
-	<form>
-	  <input type="text" data-type="search" id="filterable-tasklist">
-	</form>
-
+	      <form>
+          <input type="text" data-type="search" id="filterable-tasklist">
+        </form>
 	
-        <ul id="tasklist" class="touch" data-role="listview" data-filter="true" data-input="#filterable-tasklist" data-icon="false" data-split-icon="delete">
+        <ul id="tasklist" class="touch" data-role="listview"
+            data-filter="true" data-input="#filterable-tasklist"
+            data-icon="false" data-split-icon="delete">
         </ul>
 
-        <br/>
+        <hr/>
           
         <form action='#'>
 
           <fieldset>
             <div class="ui-field-contain">
               <label for="task">Add Task</label>
-              <input type="text" name="task" id="task" value=""
+              <input type="text" name="taskname" id="taskname" value=""
                 placeholder="Your new task"
+                data-clear-btn="true"
+                />
+              <input type="text" name="taskdetails" id="taskdetails" value=""
+                placeholder="Your new task details"
                 data-clear-btn="true"
                 />
             </div>
