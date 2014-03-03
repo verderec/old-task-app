@@ -4,52 +4,50 @@ var should = require('should'),
 
 describe('Task List', function () {
 
-  var listName = 'Test List',
+  var listName = 'Test',
       taskName = 'test task',
-      tasks = taskList({ name: listName });
+      tasks = taskList(listName);
 
   before(function(done) {
     // make sure we start with an empty task list
-    tasks.forEach(function (task, taskId) {
-      tasks.remove(taskId);
-    });
+    tasks.clearAll();
     done();
   });
-  
+
   it('should add a new task', function (done) {
     var taskId = tasks.add(taskName),
-        checkTasks = taskList({ name: listName}),
+        checkTasks = taskList(listName),
         len = checkTasks.getAll().length,
         task = checkTasks.get(taskId);
 
-
-    taskId.should.equal(0);
+		should.exist(taskId);
     len.should.equal(1);
-    task.should.equal(taskName);
+    task.name.should.equal(taskName);
     done();
   });
-  
+
   it('should find a task', function (done) {
-    var taskId = tasks.find(taskName);
+    var task = tasks.find(taskName);
     
-    taskId.should.equal(0);
-    tasks.get(taskId).should.equal(taskName);
+		should.exist(task);
+		task.should.have.property('name', taskName);
     done();
   })
   
   it('should remove a task', function (done) {
-    var taskId = 0,
+    var taskId = tasks.find(taskName).id,
         checkTasks,
         len;
 
-    tasks.remove(taskId);
+		should.exist(taskId);
+    tasks.remove(taskId).should.equal(true);
         
-    checkTasks = taskList({ name: listName});
+    checkTasks = taskList(listName);
     len = checkTasks.getAll().length;
 
     len.should.equal(0);
     done();
 
   });
-  
+
 });

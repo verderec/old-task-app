@@ -1,94 +1,206 @@
-var taskList = function taskList (spec) {
-  spec = spec || {};
+// requires IE >= 9
 
-  var that = {
 
-    name: spec.name || 'Task List',
-    
-    tasks: [],
-
-    clearAll: function clearAll () {
-      localStorage.clear();
-      that.tasks = [];
-      return [];
-    },
-    
-    add: function add (task) {
-      var newlen = that.tasks.push(task);
-      localStorage.setItem(that.name, JSON.stringify(that.tasks));
-      return (newlen - 1); // index of new entry
-    },
-  
-    remove: function remove (taskId) {
-      var removed = that.tasks.splice(taskId, 1);
-      localStorage.setItem(that.name, JSON.stringify(that.tasks));
-      return (removed.length > 0) ? true: false;
-    },
-
-    get: function get (taskId) {
-      return that.tasks[taskId];
-    },
-  
-    getAll: function getAll (taskId) {
-      return that.tasks;
-    },
-
-    getName: function getName () {
-      return that.name;
-    },
-    
-    find: function find (task) {
-      return that.tasks.indexOf(task);
-    },
-    
-    search: function search (pattern, flags) {
-      flags = flags || 'i';
-      if (typeof pattern === 'string') {
-        pattern = new RegExp(pattern, flags);
-      }
-      if (! pattern instanceof RegExp) {
-        return [];
-      } else {
-        return that.tasks.filter(function (task) {
-          return pattern.test(task.name) || pattern.test(task.details);
-        });
-      }
-    }
+var
+  /**
+   * Generate a unique ID
+   *
+   * @param {string} name - the name to use to generate the ID
+   */
+  generateId = function generateId (name) {
+    return ( name ? name : Math.random().toString() )
+    .replace(/[^a-zA-Z0-9]+/g, '')
+    .substr(-10)
+    .toLowerCase()
+    + '_' + Date.now().toString();
   },
-  localItems = localStorage.getItem(that.name),
-  tmpTasks;
 
-  localStorage.setItem(that.name + ' [VERSION]', 1);
+  /**
+   * Task representation
+   *
+   * @constructor
+   * @param {string|object} spec - either the name of the task
+   *  or an object specitication for a new task
+   */
+  task = function task (spec) {
 
-  if (localItems) {
-    tmpTasks = JSON.parse(localItems);
-    if (tmpTasks instanceof Array) {
-      that.tasks = tmpTasks;
+    var that = {
+      name: (typeof spec === 'string')
+      ? spec
+      : (spec && spec.name ? spec.name : 'Task'),
+      _meta: {
+        ctime: Date.now()
+      }
+    };
+
+    if (typeof spec !== 'string') {
+      // could select specific properties from spec
+      // but for simplicity, just copy all the spec's
+      // own properties
+      Object.getOwnPropertyNames(spec).forEach(function (pname) {
+        that[pname] = spec[pname];
+      });
     }
-  }
 
-  if (typeof Array.prototype.forEach === 'function') {
-    // real browser, or IE >=9
-    that.forEach = function forEach (fn) {
-      that.tasks.forEach(fn);
-    };
-  } else {
-    // last resort - fake it
-    that.forEach = function forEach (fn) {
-      var len = that.tasks.length,
-          i = 0;
+    that.id = that.id || generateId(that.name);
 
-      if (typeof fn !== 'function') {
-        throw new TypeError();
+    return that;
+  },
+
+  /**
+   * TaskList representation
+   *
+   * @constructor
+   * @param {String} name - name for this task list
+   */
+  taskList = function taskList (name) {
+
+    var listName = name || 'Task List',
+
+    tasks = [],
+
+    tasksById = {},
+
+    that = {
+
+      /**
+       * clearAll - empty the task lsit
+       */
+      clearAll: function clearAll () {
+        localStorage.clear();
+        tasks = [];
+      },
+      
+      /**
+       * add - add a new task to the list
+       * 
+       * @param {Object} spec - object spec for the new task
+       * @returns {String} task ID
+       */
+      
+      add: function add (spec) {
+        var newTask = task(spec);
+        tasks.push(newTask);
+        tasksById[newTask.id] = tasks.length - 1;
+        that.save();
+        return newTask.id;
+      },
+
+      /**
+       * remove - remove a task from the list
+       * 
+       * @param {String} taskId - ID of the task to remove
+       * @returns {Boolean} - true if the task was removed
+       */
+      remove: function remove (taskId) {
+        var idx = tasksById[taskId],
+        removed = 0;
+        if (idx !== null) {
+          delete tasksById[taskId];
+          removed = tasks.splice(tasksById[taskId], 1).length;
+          that.save();
+        }
+
+        return (removed === 1);
+      },
+
+      /**
+       * get - find a task by task ID
+       * 
+       * @param {String} taskId - ID of the task to remove
+       * @returns {Object} - the task, or null
+       */
+      get: function get (taskId) {
+        return tasks[tasksById[taskId]];
+      },
+
+      getAll: function getAll () {
+        return tasks;
+      },
+
+      getName: function getName () {
+        return listName;
+      },
+
+      forEach: function forEach (fn) {
+        return tasks.forEach(fn);
+      },
+
+      find: function find (nameOrId) {
+        var idx = tasksById[nameOrId],
+        matches = [];
+
+        if (!idx) {
+          matches = tasks.filter(function (t) { return (t.name === nameOrId); });
+        } else {
+          matches.push(tasks[idx]);
+        }
+        return matches.length > 0 ? matches[0] : null;
+      },
+
+      search: function search (pattern, fields, flags) {
+        if (typeof fields === 'string') {
+          flags = fields;
+          fields = [ 'name', 'details' ];
+        }
+        flags = flags || 'i';
+
+        if (typeof pattern === 'string') {
+          pattern = new RegExp(pattern, flags);
+        }
+        if (pattern instanceof RegExp) {
+          return tasks.filter(function (t) {
+            fields.some(function (field) {
+              return pattern.test(t[field]);
+            });
+          });
+        }
+        return [];
+      },
+
+      save: function save () {
+        localStorage.setItem(listName + ' [VERSION]', 2);
+        localStorage.setItem(listName, JSON.stringify(tasks));
+      },
+
+      load: function load () {
+        var localItems = localStorage.getItem(listName),
+        tmpTasks = localItems ? JSON.parse(localItems) : null,
+        storageVersion = localStorage.getItem(listName + ' [VERSION]');
+
+        if (tmpTasks) {
+          // storageVersion doesn't really matter at this time
+          // since the task constructor is flexible,
+          // but here's how different versions could be handled
+          switch (storageVersion) {
+
+          case null:
+            // original, names only, no id
+            // FALLTHROUGH
+          case 1:
+          case '1':
+            // names and details, no id
+            // FALLTHROUGH
+
+          case 2:
+          case '2':
+            // names, id, other fields
+            tmpTasks.forEach(function (t) {
+              that.add(t);
+            });
+            break;
+
+          default:
+            throw new Error('Unknown task storage version')
+            break;
+          }
+        }
       }
-
-      for ( ; i < len; i++) {
-        fn.call(void 0, that.tasks[i], i, that.tasks);
-      }
     };
-  }
 
-  return that;
-};
+    that.load();
+
+    return that;
+  };
 
 
