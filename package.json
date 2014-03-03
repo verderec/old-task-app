@@ -6,9 +6,14 @@
   "dependencies": {
     "node-localstorage": "~0.3.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+      "mocha": "1.12.0",
+      "should": "1.2.2",
+      "jshint": "2.1.10",
+      "istanbul": "0.1.43"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+      "test": "node_modules/.bin/_mocha --recursive -R spec test"
   },
   "repository": {
     "type": "git",
