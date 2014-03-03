@@ -5,75 +5,23 @@
       content="initial-scale=1.0,width=device-width,user-scalable=yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <title></title>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.css">
+    <title>Tasks</title>
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+	  <link rel="stylesheet" href="css/themes/test.css" />
+	  <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+	  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" /> 
+
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src='tasklist.js'></script>
-    <script>
-        $( document ).on("pagecreate", "#task-page", function() {
-          var tasks = taskList(),
-              addTask = function addTask (task) {
-                var taskId = tasks.add(task);
-                displayTask(task, taskId);
-              },
-
-              displayTask = function displayTask (task, taskId) {
-                $('#tasklist').append(
-                  [
-                    '<li id="', taskId, '">',
-                    '<a href="#">',
-                    task.name,
-                    '<br/>',
-                    task.details,
-                    '</a>',
-                    '<a href="#" class="delete">',
-                    'Delete',
-                    '</a>',
-                    '</li>'
-                  ].join('')
-                );
-                $('#' + taskId + ' .delete').on( "click", function () {
-                  removeTask($(this).parent('li'));
-                });
-                $('#tasklist').listview('refresh');
-              },
-
-              removeTask = function removeTask (taskItem) {
-                var taskId = taskItem.attr("id");
-                
-                if (tasks.remove(taskId)) {
-                  taskItem.remove();
-                  $('#tasklist').listview('refresh');
-                }
-              };
-          
-
-          $("form :input").on("keypress", function(e) {
-              return e.keyCode != 13;
-          });
-
-          tasks.forEach(displayTask);
-
-          $( '#add' ).on("click", function () {
-            var taskname = $('#taskname').val(),
-                taskdetails = $('#taskdetails').val();
-            addTask({ name: taskname, details: taskdetails });
-            $( '#taskname' ).val('');
-            $( '#taskdetails' ).val('');
-          });
-
-        });
-        
-
-    </script>
-    <script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
+    <script src='taskui.js'></script>
+    <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
   </head>
 
   <body>
 
     <div id="task-page" data-role="page">
       <div data-role='header' data-nobackbtn='true'>
-        <h1>Live Fire!</h1>
+        <h1>Tasks</h1>
       </div>
 
       <div data-role="content">
@@ -91,28 +39,31 @@
           
         <form action='#'>
 
-          <fieldset>
-            <div class="ui-field-contain">
-              <label for="task">Add Task</label>
+					<ul data-role="listview" data-inset="true">
+
+            <li class="ui-field-contain">
+              <label for="task">Name:</label>
               <input type="text" name="taskname" id="taskname" value=""
                 placeholder="Your new task"
                 data-clear-btn="true"
                 />
-              <input type="text" name="taskdetails" id="taskdetails" value=""
-                placeholder="Your new task details"
-                data-clear-btn="true"
-                />
-            </div>
-          </fieldset>
-          
-          <div class="ui-btn ui-input-btn ui-shadow">
-            Add
-            <input id="add" type="button"
-              data-corners="false"
-              data-enhanced="true"
-              value="Add">
-            </input>
-          </div>
+						</li>
+						<li class="ui-field-contain">
+              <label for="taskdetails">Details:</label>
+              <textarea name="taskdetails" id="taskdetails"
+								cols="40" rows="4">
+							</textarea>
+						</li>
+
+		        <li class="ui-body ui-body-b">
+		            <fieldset class="ui-grid-a">
+		                    <div class="ui-block-a"><button id="cancel" type="submit" class="ui-btn ui-corner-all ui-btn-c">Cancel</button></div>
+		                    <div class="ui-block-b"><button id="add" type="submit" class="ui-btn ui-corner-all ui-btn-b">Add</button></div>
+		            </fieldset>
+		        </li>
+
+					</ul>
+
         </form>
       </div>
     </div>
