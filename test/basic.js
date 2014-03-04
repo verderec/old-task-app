@@ -1,5 +1,5 @@
 var should = require('should'),
-    taskList = require('../node-tasklist');
+    taskList = require('../js/node-tasklist');
 
 
 describe('Task List', function () {

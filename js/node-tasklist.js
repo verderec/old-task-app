@@ -5,6 +5,6 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   localStorage = new LocalStorage('./scratch');
 }
 
-eval(fs.readFileSync('./tasklist.js', 'utf8'));
+eval(fs.readFileSync('./js/tasklist.js', 'utf8'));
 
 module.exports = taskList;
