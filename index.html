@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport"
+      content="initial-scale=1.0,width=device-width,user-scalable=yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>Tasks</title>
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+	  <link rel="stylesheet" href="css/themes/test.css" />
+	  <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+	  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" /> 
+
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src='js/tasklist.js'></script>
+    <script src='js/taskui.js'></script>
+    <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+  </head>
+
+  <body>
+
+    <div id="task-page" data-role="page">
+      <div data-role='header' data-nobackbtn='true'>
+        <h1>Tasks</h1>
+      </div>
+
+      <div data-role="content">
+
+				<div class="ui-corner-all custom-corners">
+				  <div class="ui-body ui-body-a">
+						<form>
+							<input type="text" data-type="search" id="filterable-tasklist">
+						</form>
+					</div>
+				</div>
+	
+				<ul id="tasklist" data-role="listview" data-count-theme="b" data-inset="true"
+            data-filter="true" data-input="#filterable-tasklist">
+        </ul>
+
+          
+				<div class="ui-corner-all custom-corners">
+				  <div class="ui-bar ui-bar-a">
+				    <h3>Add Task</h3>
+				  </div>
+				  <div class="ui-body ui-body-a">
+
+		        <form action='#'>
+
+							<ul data-role="listview" data-inset="true">
+
+		            <li class="ui-field-contain">
+		              <label for="task">Name:</label>
+		              <input type="text" name="taskname" id="taskname" value=""
+		                placeholder="Your new task"
+		                data-clear-btn="true"
+		                />
+								</li>
+								<li class="ui-field-contain">
+		              <label for="taskdetails">Details:</label>
+		              <textarea name="taskdetails" id="taskdetails"
+										cols="40" rows="4"></textarea>
+								</li>
+
+				        <li class="ui-body ui-body-b">
+				            <fieldset class="ui-grid-a">
+				                    <div class="ui-block-a"><a href='#' id="cancel" class="ui-btn ui-corner-all ui-btn-c">Cancel</a></div>
+				                    <div class="ui-block-b"><a href='#' id="add"    class="ui-btn ui-corner-all ui-btn-b">Add</a></div>
+				            </fieldset>
+				        </li>
+
+							</ul>
+
+		        </form>
+
+				  </div>
+				</div>
+
+
+      </div>
+    </div>
+
+  </body>
+</html>
