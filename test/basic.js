@@ -1,28 +1,39 @@
 var should = require('should'),
-    taskList = require('../js/node-tasklist');
+    taskApp = require('../js/node-taskstore');
 
 
 describe('Task List', function () {
 
-  var listName = 'Test',
+  var appName = 'Test App',
+      listName = 'Test List',
       taskName = 'test task',
-      tasks = taskList(listName);
+      app = taskApp(appName),
+      tasks = app.find(listName) || app.add(listName);
 
   before(function(done) {
     // make sure we start with an empty task list
-    tasks.clearAll();
+        
+    if (tasks) {
+      tasks.clearAll();
+    }
     done();
   });
 
   it('should add a new task', function (done) {
     var taskId = tasks.add(taskName),
-        checkTasks = taskList(listName),
-        len = checkTasks.getAll().length,
-        task = checkTasks.get(taskId);
+        checkApp, checkTasks, len, task;
 
 		should.exist(taskId);
+    tasks.get(taskId).name.should.equal(taskName);
+    /*
+    checkApp = taskApp(appName);
+    checkTasks = checkApp.find(listName) || checkApp.add(listName);
+    len = checkTasks.getAll().length;
+    task = checkTasks.get(taskId);
+
     len.should.equal(1);
     task.name.should.equal(taskName);
+*/
     done();
   });
 
@@ -36,16 +47,19 @@ describe('Task List', function () {
   
   it('should remove a task', function (done) {
     var taskId = tasks.find(taskName).id,
-        checkTasks,
+        checkApp, checkTasks,
         len;
 
 		should.exist(taskId);
     tasks.remove(taskId).should.equal(true);
-        
-    checkTasks = taskList(listName);
+    tasks.getAll().length.should.equal(0);
+/*        
+    checkApp = taskApp(appName);
+    checkTasks = checkApp.find(listName);
     len = checkTasks.getAll().length;
 
     len.should.equal(0);
+*/
     done();
 
   });
