@@ -73,14 +73,14 @@ var
            * add - add a new task list
            */
           add: function add (name) {
-            if (find(name)) {
-              return null; // should throw an error
-            } else {
+            name = name || 'Task List';
+            if (! taskListsByName[name]) {
               taskLists.push(taskList(name));
               taskListsByName[name] = taskLists.length - 1;
-              return taskListsByName[name];
+              that.save();
+              return taskLists[taskListsByName[name]];
             }
-            return null;
+            return null; // should throw an error
           },
           
           /**
@@ -91,6 +91,7 @@ var
 
             if (typeof idx === 'number') {
               delete taskLists[idx];
+              that.save();
               return true;
             }
             return false;
@@ -101,6 +102,10 @@ var
            */
           forEach: function forEach (fn) {
             return taskLists.forEach(fn);
+          },
+          
+          getAll: function getAll () {
+            return taskLists;
           },
 
           /**
@@ -133,7 +138,7 @@ var
                   // just an array of list names
                   // FALLTHROUGH
                   tmpLists.forEach(function (listName) {
-                    taskLists.add(listName);
+                    that.add(listName);
                   });
                   break;
 
@@ -141,8 +146,11 @@ var
                   throw new Error('Unknown task storage version')
                   break;
               }
+            } else {
+              // use the default list name
+              that.add('Task List');
             }
-          }
+          },
         };
 
     that.load();
@@ -159,7 +167,8 @@ var
   taskList = function taskList (name) {
 
     var listName = name || 'Task List',
-        id = null,
+        listId = generateId(),
+        listVersion = 3,
         tasks = [],
         tasksById = {},
         that = {
@@ -221,6 +230,14 @@ var
           getName: function getName () {
             return listName;
           },
+          
+          rename: function rename (newName) {
+            that.listName = newName;
+          },
+          
+          getId: function getId () {
+            return listId;
+          },
 
           forEach: function forEach (fn) {
             return tasks.forEach(fn);
@@ -259,16 +276,22 @@ var
           },
 
           save: function save () {
-            localStorage.setItem(listName + ' [VERSION]', 2);
-            localStorage.setItem(listName, JSON.stringify(tasks));
+            var tmp = {
+              name: listName,
+              id: listId,
+              version: listVersion,
+              tasks: tasks
+            };
+            localStorage.setItem(listName + ' [VERSION]', 3);
+            localStorage.setItem(listName, JSON.stringify(tmp));
           },
 
           load: function load () {
             var localItems = localStorage.getItem(listName),
-            tmpTasks = localItems ? JSON.parse(localItems) : null,
+            tmp = localItems ? JSON.parse(localItems) : null,
             storageVersion = localStorage.getItem(listName + ' [VERSION]');
 
-            if (tmpTasks) {
+            if (tmp) {
               // storageVersion doesn't really matter at this time
               // since the task constructor is flexible,
               // but here's how different versions could be handled
@@ -285,9 +308,22 @@ var
               case 2:
               case '2':
                 // names, id, other fields
-                tmpTasks.forEach(function (t) {
+                tmp.forEach(function (t) {
                   that.add(t);
                 });
+                break;
+                
+              case 3:
+              case '3':
+                // list name, list ID, storage version, tasks
+                if (tmp.name && tmp.id && tmp.version && tmp.tasks) {
+                  listName = tmp.name;
+                  listId = tmp.id;
+                  version = tmp.version;
+                  tasks = tmp.tasks;
+                } else {
+                  throw new Error('Expected fields were missing');
+                }
                 break;
 
               default:
