@@ -79,8 +79,9 @@ var
               taskListsByName[name] = taskLists.length - 1;
               that.save();
               return taskLists[taskListsByName[name]];
+            } else {
+              return null; // should throw an error
             }
-            return null; // should throw an error
           },
           
           /**
@@ -112,11 +113,11 @@ var
            * save - save the Task App state by saving task list names
            */
           save: function save () {
-            var tmpLists = taskLists.map(function (list) {
+            var jsonToSave = JSON.stringify(taskLists.map(function (list) {
               return list.getName();
-            });
+            }));
             localStorage.setItem(appName + ' [VERSION]', 1);
-            localStorage.setItem(appName, JSON.stringify(tmpLists));
+            localStorage.setItem(appName, jsonToSave);
           },
 
           /**
@@ -146,9 +147,6 @@ var
                   throw new Error('Unknown task storage version')
                   break;
               }
-            } else {
-              // use the default list name
-              that.add('Task List');
             }
           },
         };
@@ -256,10 +254,14 @@ var
           },
 
           search: function search (pattern, fields, flags) {
+            var defaultFields = [ 'name', 'details' ];
+
             if (typeof fields === 'string') {
               flags = fields;
-              fields = [ 'name', 'details' ];
+              fields = defaultFields;
             }
+
+            fields = fields || defaultFields;
             flags = flags || 'i';
 
             if (typeof pattern === 'string') {
@@ -267,7 +269,7 @@ var
             }
             if (pattern instanceof RegExp) {
               return tasks.filter(function (t) {
-                fields.some(function (field) {
+                return fields.some(function (field) {
                   return pattern.test(t[field]);
                 });
               });
