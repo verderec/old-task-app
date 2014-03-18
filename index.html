@@ -9,7 +9,7 @@
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
 	  <link rel="stylesheet" href="css/themes/test.css" />
 	  <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
-	  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" /> 
+	  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
 
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src='js/taskstore.js'></script>
@@ -18,13 +18,56 @@
   </head>
 
   <body>
+    
+    <section id="lists-page" data-role="page">
+      <header data-role='header' data-theme="b" data-nobackbtn='true' data-position="fixed">
+        <a href="#main-menu" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-nodisc-icon">Menu</a>
+        <h1>Lists</h1>
+        <a href="#add-list" data-rel="popup" class="ui-btn-right ui-btn ui-icon-plus ui-btn-icon-notext ui-nodisc-icon">Add</a>
+      </header>
+      
+      <article id="lists-page-content" role="main" class="ui-content">
+				<ul id="lists-list" data-role="listview" data-count-theme="b" data-inset="true"></ul>
+      </article>
+      
+      <footer data-role="footer" data-position="fixed">
+        <div data-role="navbar" data-iconpos="top" class="ui-body ui-body-b">
+          <ul  data-inset="false">
+            <li><a data-icon="gear" href="#">Options</a></li>
+            <li><a data-icon="location" href="#">Nearby</a></li>
+            <li><a data-icon="search" href="#">Search</a></li>
+          </ul>
+        </div>
+      </footer>
 
-    <div id="task-page" data-role="page">
-      <div data-role='header' data-nobackbtn='true'>
-        <h1>Tasks</h1>
-      </div>
+      <aside data-role="popup" id="no-task-list-name" class="ui-content" data-dismissible="false">
+			  <a href="#" data-rel="back" data-role="button" data-theme="b" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Close</a>
+        <p>Task Lists must have a name</p>
+      </aside>
 
-      <div data-role="content">
+      <aside data-role="popup" id="add-list" data-theme="a" class="ui-corner-all">
+  			<form>
+  				<div style="padding:10px 20px;">
+		          <label for="list-name" class="ui-hidden-accessible">Name:</label>
+		          <input type="text" name="list-name" id="list-name" value="" placeholder="list name" data-theme="a" />
+		          <label for="list-desc" class="ui-hidden-accessible">Description:</label>
+		          <input type="text" name="list-desc" id="list-desc" value="" placeholder="your list description" data-theme="a" />
+              <a href='#' id="add-list-add"    class="ui-btn ui-corner-all ui-btn-b">Add</a>
+  				</div>
+  			</form>
+  		</aside>
+
+    </section>
+
+    <section id="tasks-page" data-role="page">
+
+      <header data-role='header' data-theme="b" data-position="fixed">
+        <a href="#lists-page" class="ui-btn ui-icon-carat-l ui-btn-icon-notext">Lists</a>
+        <h1>--NAME--</h1>
+        <a href="#add-task" data-rel="popup" class="ui-btn-right ui-btn ui-icon-plus ui-btn-icon-notext ui-nodisc-icon">Add</a>
+      </header>
+
+      <article data-role="content">
 
 				<div class="ui-corner-all custom-corners">
 				  <div class="ui-body ui-body-a">
@@ -34,51 +77,40 @@
 					</div>
 				</div>
 	
-				<ul id="tasklist" data-role="listview" data-count-theme="b" data-inset="true"
+				<ul id="tasks-list" data-role="listview" data-count-theme="b" data-inset="true"
             data-filter="true" data-input="#filterable-tasklist">
         </ul>
 
-          
-				<div class="ui-corner-all custom-corners">
-				  <div class="ui-bar ui-bar-a">
-				    <h3>Add Task</h3>
-				  </div>
-				  <div class="ui-body ui-body-a">
+      </article>
 
-		        <form action='#'>
+      <aside data-role="popup" id="no-task-name" class="ui-content" data-dismissible="false">
+			  <a href="#" data-rel="back" data-role="button" data-theme="b" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Close</a>
+        <p>Tasks must have a name</p>
+      </aside>
 
-							<ul data-role="listview" data-inset="true">
+      <aside data-role="popup" id="add-task" data-theme="a" class="ui-corner-all">
+  			<form>
+  				<div style="padding:10px 20px;">
+		          <label for="task-name" class="ui-hidden-accessible">Name:</label>
+		          <input type="text" name="task-name" id="task-name" value="" placeholder="task name" data-theme="a" />
+		          <label for="task-details" class="ui-hidden-accessible">Details:</label>
+              <textarea name="task-details" id="task-details"	cols="40" rows="4"></textarea>
+              <a href='#' id="add-task-add"    class="ui-btn ui-corner-all ui-btn-b">Add</a>
+  				</div>
+  			</form>
+  		</aside>
 
-		            <li class="ui-field-contain">
-		              <label for="task">Name:</label>
-		              <input type="text" name="taskname" id="taskname" value=""
-		                placeholder="Your new task"
-		                data-clear-btn="true"
-		                />
-								</li>
-								<li class="ui-field-contain">
-		              <label for="taskdetails">Details:</label>
-		              <textarea name="taskdetails" id="taskdetails"
-										cols="40" rows="4"></textarea>
-								</li>
+      <footer data-role="footer" data-position="fixed">
+        <div data-role="navbar" data-iconpos="top" class="ui-body ui-body-b">
+          <ul  data-inset="false">
+            <li><a data-icon="gear" href="#">Options</a></li>
+            <li><a data-icon="location" href="#">Nearby</a></li>
+            <li><a data-icon="search" href="#">Search</a></li>
+          </ul>
+        </div>
+      </footer>
 
-				        <li class="ui-body ui-body-b">
-				            <fieldset class="ui-grid-a">
-				                    <div class="ui-block-a"><a href='#' id="cancel" class="ui-btn ui-corner-all ui-btn-c">Cancel</a></div>
-				                    <div class="ui-block-b"><a href='#' id="add"    class="ui-btn ui-corner-all ui-btn-b">Add</a></div>
-				            </fieldset>
-				        </li>
-
-							</ul>
-
-		        </form>
-
-				  </div>
-				</div>
-
-
-      </div>
-    </div>
+    </section>
 
   </body>
 </html>
