@@ -57,6 +57,7 @@ var
     var appName = name || 'Task App',
         taskLists = [],
         taskListsByName = {},
+        taskListsById = {},
 
         that = {
           
@@ -72,13 +73,23 @@ var
           /**
            * add - add a new task list
            */
-          add: function add (name) {
-            name = name || 'Task List';
-            if (! taskListsByName[name]) {
-              taskLists.push(taskList(name));
-              taskListsByName[name] = taskLists.length - 1;
+          add: function add (spec) {
+            var newList;
+            
+            if (typeof spec === 'string') {
+              spec = { name: spec, description: '' }
+            } else {
+              spec = spec || {};
+              spec.name = spec.name || (taskLists.length === 0 ? 'Task List' :  ('Task List ' + taskLists.length));
+              spec.description = spec.description || '';
+            }
+
+            if (! taskListsByName[spec.name]) {
+              newList = taskList(spec);
+              taskLists.push(newList);
+              taskListsByName[newList.getName()] = taskListsById[newList.getId()] = taskLists.length - 1;
               that.save();
-              return taskLists[taskListsByName[name]];
+              return newList;
             } else {
               return null; // should throw an error
             }
@@ -87,17 +98,35 @@ var
           /**
            * remove - remove a task list
            */
-          remove: function remove (name) {
-            var idx = taskListsByName[name];
+          remove: function remove (id) {
+            var idx = taskListsById[id],
+                taskList;
 
             if (typeof idx === 'number') {
-              delete taskLists[idx];
-              that.save();
-              return true;
+              taskList = taskLists[idx];
+              removed = taskLists.splice(idx, 1).length;
+              if (removed > 0) {
+                delete taskListsById[id];
+                delete taskListsByName[taskList.getName()];
+                that.save();
+                return true;
+              }
             }
             return false;
           },
           
+          /**
+           * get - return a taskList with a specific id
+           */
+          get: function get (id) {
+            var idx = taskListsById[id];
+            
+            if (typeof idx === 'number') {
+              return taskLists[idx];
+            }
+            return null;
+          },
+
           /**
            * forEach - call a function on each TaskList
            */
@@ -128,7 +157,7 @@ var
             tmpLists = localItems ? JSON.parse(localItems) : null,
             storageVersion = localStorage.getItem(appName + ' [VERSION]');
 
-            if (tmpLists) {
+            if (tmpLists && tmpLists.length) {
               // storageVersion doesn't really matter at this time
               // since the task constructor is flexible,
               // but here's how different versions could be handled
@@ -162,9 +191,18 @@ var
    * @constructor
    * @param {String} name - name for this task list
    */
-  taskList = function taskList (name) {
+  taskList = function taskList (spec) {
 
-    var listName = name || 'Task List',
+    if (typeof spec === 'string') {
+      spec = { name: spec, description: ''}
+    };
+    spec = spec || {};
+    spec.name = spec.name || 'Task List';
+    spec.description = spec.description || '';
+
+    
+    var listName = spec.name,
+        listDescription = spec.description,
         listId = generateId(),
         listVersion = 3,
         tasks = [],
@@ -229,6 +267,10 @@ var
             return listName;
           },
           
+          getDescription: function getDescription () {
+            return listDescription;
+          },
+          
           rename: function rename (newName) {
             that.listName = newName;
           },
@@ -280,6 +322,7 @@ var
           save: function save () {
             var tmp = {
               name: listName,
+              description: listDescription,
               id: listId,
               version: listVersion,
               tasks: tasks
@@ -297,6 +340,8 @@ var
               // storageVersion doesn't really matter at this time
               // since the task constructor is flexible,
               // but here's how different versions could be handled
+
+              storageVersion = tmp.version ? tmp.version : storageVersion;
               switch (storageVersion) {
 
               case null:
@@ -320,6 +365,7 @@ var
                 // list name, list ID, storage version, tasks
                 if (tmp.name && tmp.id && tmp.version && tmp.tasks) {
                   listName = tmp.name;
+                  listDescription = tmp.description || '',
                   listId = tmp.id;
                   version = tmp.version;
                   tasks = tmp.tasks;
