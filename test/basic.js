@@ -25,7 +25,7 @@ describe('Task List', function () {
 
 		should.exist(taskId);
     tasks.get(taskId).name.should.equal(taskName);
-    /*
+
     checkApp = taskApp(appName);
     checkTasks = checkApp.find(listName) || checkApp.add(listName);
     len = checkTasks.getAll().length;
@@ -33,7 +33,7 @@ describe('Task List', function () {
 
     len.should.equal(1);
     task.name.should.equal(taskName);
-*/
+
     done();
   });
 
@@ -53,13 +53,13 @@ describe('Task List', function () {
 		should.exist(taskId);
     tasks.remove(taskId).should.equal(true);
     tasks.getAll().length.should.equal(0);
-/*        
+
     checkApp = taskApp(appName);
     checkTasks = checkApp.find(listName);
     len = checkTasks.getAll().length;
 
     len.should.equal(0);
-*/
+
     done();
 
   });

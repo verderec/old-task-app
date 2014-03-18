@@ -333,6 +333,12 @@ var
                 break;
               }
             }
+
+            if (tasks.length > 0) {
+              tasks.forEach(function (task, idx) {
+                tasksById[task.id] = idx;
+              });
+            }
           }
         };
 
