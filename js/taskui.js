@@ -1,10 +1,15 @@
 $( document ).on( "mobileinit", function () {
   
+  // initialize the app by creating (and loading, if it exists)
+  // the taskApp, and getting the first taskList (or creating a
+  // new taskList if the collection is empty)
   var app = taskApp(),
       taskList = app.getAll()[0] || app.add(),
 
 			/**
-			 *  display a task
+			 * displayTask - add a task to the task display
+       *
+       * @param {Object} task - a task Object
 			 */
       displayTask = function displayTask (task) {
         $('#tasks-list').append(
@@ -23,6 +28,11 @@ $( document ).on( "mobileinit", function () {
         $('#tasks-list').listview('refresh');
       },
 
+			/**
+			 * displayTaskList - add a taskList to the taskList display
+       *
+       * @param {Object} taskList - a taskList Object
+			 */
       displayTaskList = function displayTaskList (taskList) {
         $('#lists-list').append(
           [
@@ -40,6 +50,10 @@ $( document ).on( "mobileinit", function () {
         $('#lists-list').listview('refresh');
       },
       
+      /**
+       * deleteTaskList - delete a taskList from the display
+       *                  and the collection of taskLists
+       */
       deleteTaskList = function deleteTaskList (event) {
         var taskListItem = event.data,
             taskListId = taskListItem.attr("id");
@@ -123,6 +137,12 @@ $( document ).on( "mobileinit", function () {
         }
 			},
 			
+      /**
+       * setupSwipes - setup swipe to delete controls on a listview
+       *
+       * @param {Object} listElement - the listElement to augment
+       * @param {Function} deleteFn - the function to call to delete a list item
+       */
       setupSwipes = function setupSwipes (listElement, deleteFn) {
         var
           /**
@@ -132,23 +152,22 @@ $( document ).on( "mobileinit", function () {
     			 *  if there's an existing item awaiting
     			 *  deletion, clear the delete button on
     			 *  that item frst.
-    			 *
-    			 *  TODO: that could probably be done with
-    			 *        selectors rather than a variable
     			 */
     			setupDelete = function setupDelete (target, deleteFn) {
     				var icon = target.children().last();
 				
-    				// clear existing delete button
+    				// clear existing delete button(s)
             $(listElement).children("[data-icon='delete']").each(function (idx, el) {
               clearDelete(el);
             })
 
     				// change the icon from > to X, use style C for red
-    				// background
+    				// background, register deleteTask as the click handler,
+    				// and pass in the LI element in event.data
     				$(icon).attr('data-icon', 'delete')
     		                     .addClass('ui-nodisc-icon ui-icon-delete ui-btn-c')
     		                     .removeClass('ui-icon-carat-r');
+                     		     .on('click', null, target, deleteFn);
 
     				// register deleteTask as the click handler,
     				// and pass in the LI element in event.data
@@ -165,9 +184,8 @@ $( document ).on( "mobileinit", function () {
 
   					$(icon).attr('data-icon', 'carat-r')
   			                     .removeClass('ui-nodisc-icon ui-icon-delete ui-btn-c')
-  			                     .addClass('ui-icon-carat-r');
-
-  					$(icon).off('click', deleteTask);
+  			                     .addClass('ui-icon-carat-r')
+                             .off('click', deleteTask);
     			};
       
       	// use left swipe to show the delete button on a task
@@ -197,19 +215,20 @@ $( document ).on( "mobileinit", function () {
 
 
 	// suppress Enter/Return in forms
-//  $("form :input").on("keypress", function(e) {
-//      return e.keyCode != 13;
-//  });
+  $("form :input").on("keypress", function(e) {
+    return e.keyCode != 13;
+  });
 
-	// display any existing tasks (loaded from localstorage)
-//  tasks.forEach(displayTask);
-
+  
+  // setup the swipe handlers on the tasks page
+  // when creating it
   $( document ).on("pagecreate", "#tasks-page", function () {
     setupSwipes($('#tasks-list'), deleteTask);
     // register the event handler for creating tasks
     $("#add-task-add").on("click", createTask);
   });
-
+  
+  // reset the task list every time the tasks page is to be shown
   $( document ).on("pagebeforeshow", "#tasks-page", function (event) {
     $('#tasks-list').empty();
     taskList.forEach(function (task) {
@@ -219,26 +238,49 @@ $( document ).on( "mobileinit", function () {
     
   });
 
+  // update the list item's task count on the list page
+  // before switching away from the tasks page
   $( document ).on("pagebeforehide", "#tasks-page", function (event) {
     // update lists-page coount
     var selector = '#' + taskList.getId() + ' .ui-li-count';
     $(selector).html(taskList.getAll().length);
   });
-  
+
+  // initialize the list of taskLists page,
   $( document ).on("pagecreate", '#lists-page', function() {
+
+    // add all the taskLists to the page
     app.forEach(displayTaskList);
     $('#lists-list').listview('refresh');
+    
+    // set up swipe controls on the task list
     setupSwipes($('#lists-list'), deleteTaskList);
+    
+    // add a click handler for the add taskList form
     $("#add-list-add").on("click", createTaskList);
+    
+    // add a click handler to the listview to control
+    /// navigation into a taskList
     $("#lists-list").on("click", function (event) {
   		var target = $(event.target).parentsUntil('', 'li'),
           taskListId;
 
+      // nothing else should be called for this event
       event.preventDefault();
+
+      
       if (target && target.length > 0) {
+
+        // get the id of the selected taskList
         taskListId = target.attr('id');
+
+        // point taskList at the selected taskList
         taskList = app.get(taskListId);
+
+        // update the tasks page header with the taskList's name
         $('#tasks-page header h1').html(taskList.getName());
+
+        // switch to the tasks page
         $( ":mobile-pagecontainer" ).pagecontainer( "change", $('#tasks-page'));
       }
     });

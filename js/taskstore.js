@@ -17,6 +17,9 @@ var
 
   /**
    * Task representation
+   * 
+   * Really just a wrapper to ensure that tasks have unique IDs
+   * and a creation date/time
    *
    * @constructor
    * @param {string|object} spec - either the name of the task
@@ -50,6 +53,9 @@ var
   /**
    * TaskApp representation
    *
+   * A TaskApp is just a collection of TaskLists, and some
+   * useful methods for managing that collection.
+   *
    * @constructor
    * @param {String} name - name for this task app
    */
@@ -72,10 +78,15 @@ var
 
           /**
            * add - add a new task list
+           *
+           * @param {String|Object} spec - either a name for the list
+           *                               or an Object with list properties
+           * @returns String new taskList object
            */
           add: function add (spec) {
             var newList;
-            
+
+            // if spec is just a string, morph it into a spec Object
             if (typeof spec === 'string') {
               spec = { name: spec, description: '' }
             } else {
@@ -84,6 +95,9 @@ var
               spec.description = spec.description || '';
             }
 
+            // create the new TaskList, unless it's alread in this collection
+            // the TaskList will be loaded from localStorage by the taskList
+            // constructor if the name matches a localStorage key
             if (! taskListsByName[spec.name]) {
               newList = taskList(spec);
               taskLists.push(newList);
@@ -97,6 +111,9 @@ var
           
           /**
            * remove - remove a task list
+           *
+           * @param {String} remove a taskList from the collection
+           * @returns {Boolean} returns true if the removal was successful
            */
           remove: function remove (id) {
             var idx = taskListsById[id],
@@ -106,6 +123,7 @@ var
               taskList = taskLists[idx];
               removed = taskLists.splice(idx, 1).length;
               if (removed > 0) {
+                // also clean up the ById and ByName maps
                 delete taskListsById[id];
                 delete taskListsByName[taskList.getName()];
                 that.save();
@@ -117,6 +135,9 @@ var
           
           /**
            * get - return a taskList with a specific id
+           *
+           * @param {String} id - the ID of a taskList
+           * @returns {Object} - returns a taskList object, or null
            */
           get: function get (id) {
             var idx = taskListsById[id];
@@ -129,11 +150,18 @@ var
 
           /**
            * forEach - call a function on each TaskList
+           *
+           * @param {Function} fn - the function to apply to each taskList
            */
           forEach: function forEach (fn) {
             return taskLists.forEach(fn);
           },
           
+          /**
+           * getAll - return all the taskLists as an array
+           *
+           * @returns {Array} an array of taskList objects
+           */
           getAll: function getAll () {
             return taskLists;
           },
