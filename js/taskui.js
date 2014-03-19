@@ -166,7 +166,7 @@ $( document ).on( "mobileinit", function () {
     				// and pass in the LI element in event.data
     				$(icon).attr('data-icon', 'delete')
     		                     .addClass('ui-nodisc-icon ui-icon-delete ui-btn-c')
-    		                     .removeClass('ui-icon-carat-r');
+    		                     .removeClass('ui-icon-carat-r')
                      		     .on('click', null, target, deleteFn);
 
     				// register deleteTask as the click handler,
