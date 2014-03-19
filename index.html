@@ -12,6 +12,8 @@
 	  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
 
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://www.dropbox.com/static/api/dropbox-datastores-1.0-latest.js"></script>
+    <script src="js/dropbox-key.js"></script>
     <script src='js/taskstore.js'></script>
     <script src='js/taskui.js'></script>
     <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
@@ -19,6 +21,26 @@
 
   <body>
     
+    <section id="dropbox-login-page" data-role="page">
+      <header data-role='header' data-theme="b" data-nobackbtn='true' data-position="fixed">
+        <h1>Lists</h1>
+      </header>
+      
+      <article role="main" class="ui-content">
+				<a href="#" class="ui-btn" id="dropbox-login">Link to Dropbox</a>
+      </article>
+    </section>
+
+    <section id="loading-page" data-role="page">
+      <header data-role='header' data-theme="b" data-nobackbtn='true' data-position="fixed">
+        <h1>Lists</h1>
+      </header>
+      
+      <article role="main" class="ui-content">
+				<p>Loading...</p>
+      </article>
+    </section>
+      
     <section id="lists-page" data-role="page">
       <header data-role='header' data-theme="b" data-nobackbtn='true' data-position="fixed">
         <a href="#main-menu" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-nodisc-icon">Menu</a>

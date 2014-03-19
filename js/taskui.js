@@ -1,12 +1,9 @@
 $( document ).on( "mobileinit", function () {
-  
   // initialize the app by creating (and loading, if it exists)
   // the taskApp, and getting the first taskList (or creating a
   // new taskList if the collection is empty)
-  var app = taskApp(),
-      taskList = app.getAll()[0] || app.add(),
-
-			/**
+  var 
+  		/**
 			 * displayTask - add a task to the task display
        *
        * @param {Object} task - a task Object
@@ -166,7 +163,7 @@ $( document ).on( "mobileinit", function () {
     				// and pass in the LI element in event.data
     				$(icon).attr('data-icon', 'delete')
     		                     .addClass('ui-nodisc-icon ui-icon-delete ui-btn-c')
-    		                     .removeClass('ui-icon-carat-r');
+    		                     .removeClass('ui-icon-carat-r')
                      		     .on('click', null, target, deleteFn);
 
     				// register deleteTask as the click handler,
@@ -212,13 +209,15 @@ $( document ).on( "mobileinit", function () {
       		}
       	});
       };
+      
+  console.log('INITIALIZING')
 
-
-	// suppress Enter/Return in forms
+  // setup pages
+  
+  // suppress Enter/Return in forms
   $("form :input").on("keypress", function(e) {
     return e.keyCode != 13;
   });
-
   
   // setup the swipe handlers on the tasks page
   // when creating it
@@ -227,7 +226,7 @@ $( document ).on( "mobileinit", function () {
     // register the event handler for creating tasks
     $("#add-task-add").on("click", createTask);
   });
-  
+
   // reset the task list every time the tasks page is to be shown
   $( document ).on("pagebeforeshow", "#tasks-page", function (event) {
     $('#tasks-list').empty();
@@ -235,7 +234,6 @@ $( document ).on( "mobileinit", function () {
       displayTask(task)
     });
     $('#tasks-list').listview('refresh');
-    
   });
 
   // update the list item's task count on the list page
@@ -248,41 +246,93 @@ $( document ).on( "mobileinit", function () {
 
   // initialize the list of taskLists page,
   $( document ).on("pagecreate", '#lists-page', function() {
-
-    // add all the taskLists to the page
-    app.forEach(displayTaskList);
-    $('#lists-list').listview('refresh');
+    $('#lists-list').empty();
     
-    // set up swipe controls on the task list
+   // set up swipe controls on the task list
     setupSwipes($('#lists-list'), deleteTaskList);
-    
+
     // add a click handler for the add taskList form
     $("#add-list-add").on("click", createTaskList);
-    
+
     // add a click handler to the listview to control
-    /// navigation into a taskList
+    // navigation into a taskList
     $("#lists-list").on("click", function (event) {
   		var target = $(event.target).parentsUntil('', 'li'),
-          taskListId;
+          currTaskListId;
 
       // nothing else should be called for this event
       event.preventDefault();
 
-      
       if (target && target.length > 0) {
 
         // get the id of the selected taskList
-        taskListId = target.attr('id');
+        currTaskListId = target.attr('id');
 
         // point taskList at the selected taskList
-        taskList = app.get(taskListId);
+        currTaskList = app.get(currTaskListId);
 
         // update the tasks page header with the taskList's name
-        $('#tasks-page header h1').html(taskList.getName());
+        $('#tasks-page header h1').html(currTaskList.getName());
 
         // switch to the tasks page
         $( ":mobile-pagecontainer" ).pagecontainer( "change", $('#tasks-page'));
       }
     });
   });
+  
+  $( document ).on("pagebeforeshow", "#lists-page", function () {
+    console.log('SETTING UP LISTS PAGE');
+    // add all the taskLists to the page
+    console.dir(app);
+    app.forEach(displayTaskList);
+    $('#lists-list').listview('refresh');
+  });
+  
+  $( ":mobile-pagecontainer" ).pagecontainer( "change", $('#loading-page'));
+  
+
+  function TaskAppUIInit() {
+    if (dropbox.isAuthenticated()) {
+      if (!dropboxLists) {
+        alert("Dropbox not initialized");
+      }
+      app = taskApp();
+      if (app) {
+        console.dir(app.getAll());
+        if (app.getAll().length > 0) {
+          currTaskList = app.getAll()[0];
+        } else {
+          console.log('creating new list');
+          currTaskList = app.add('My First List');
+        }
+      }
+
+      // switch to the task lists page
+      console.log('switching to lists page');
+      $( ":mobile-pagecontainer" ).pagecontainer( "change", $('#lists-page'));
+      console.dir(app.getAll());
+    }
+  }
+
+
+  
+  // Try to finish OAuth authorization.
+  dropbox.authenticate({interactive: false}, function (error) {
+    if (error) {
+      alert('Authentication error: ' + error);
+    }
+  });
+  
+  console.log('adding event handler to dropbox-login');
+	$("#dropbox-login").on("click", function (e) {
+    console.log('GO GO GO DROPBOX!!!');
+		e.preventDefault();
+		// This will redirect the browser to OAuth login.
+		dropbox.authenticate();
+  });
+//  $( ":mobile-pagecontainer" ).pagecontainer( "change", $('#dropbox-login-page'));
+    
+  
 });
+
+

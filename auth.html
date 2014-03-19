@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport"
+      content="initial-scale=1.0,width=device-width,user-scalable=yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>Tasks</title>
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+	  <link rel="stylesheet" href="css/themes/test.css" />
+	  <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+	  <link rel="stylesheet" href="//code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
+
+    <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://www.dropbox.com/static/api/dropbox-datastores-1.0-latest.js"></script>
+    <script src="js/dropbox-key.js"></script>
+    <script>
+      $( function () {
+        // The login button will start the authentication process.
+        $("#login").on("click", function (e) {
+          console.log('Click');
+          e.preventDefault();
+          // This will redirect the browser to OAuth login.
+          dropbox.authenticate();
+        });
+
+        // Try to finish OAuth authorization.
+        dropbox.authenticate({interactive:false}, function (error) {
+          if (error) {
+            alert('Authentication error: ' + error);
+          }
+        });
+
+        if (dropbox.isAuthenticated()) {
+          // Client is authenticated. Display UI.
+          $('#login').hide();
+          
+          localStorage.setItem('dropboxCredentials', JSON.stringify(dropbox.credentials()));
+          window.location.href = '/index.html';
+        }
+  		});
+    </script>
+  </head>
+
+  <body>
+    
+    <section id="dropbox-login-page" data-role="page">
+      <header data-role='header' data-theme="b" data-nobackbtn='true' data-position="fixed">
+        <h1>Login</h1>
+      </header>
+      
+      <article role="main" class="ui-content">
+          <a href="#" id="login">Link to Dropbox</a>
+      </article>
+    </section>
+
+
+  </body>
+</html>
