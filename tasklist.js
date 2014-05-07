@@ -1,45 +1,45 @@
-var taskList = function taskList (spec) {
+
+var TaskList = function TaskList (spec) {
   spec = spec || {};
 
   var that = {
 
     name: spec.name || 'Task List',
     
-    tasks: [],
 
     clearAll: function clearAll () {
       localStorage.clear();
-      that.tasks = [];
+      spec.tasks = [];
       return [];
     },
     
     add: function add (task) {
-      var newlen = that.tasks.push(task);
-      localStorage.setItem(that.name, JSON.stringify(that.tasks));
+      var newlen = spec.tasks.push(task);
+      localStorage.setItem(spec.tasks, JSON.stringify(spec.tasks));
       return (newlen - 1); // index of new entry
     },
   
     remove: function remove (taskId) {
-      var removed = that.tasks.splice(taskId, 1);
-      localStorage.setItem(that.name, JSON.stringify(that.tasks));
+      var removed = spec.tasks.splice(taskId, 1);
+      localStorage.setItem(spec.tasks, JSON.stringify(spec.tasks));
       return (removed.length > 0) ? true: false;
     },
 
     get: function get (taskId) {
-      return that.tasks[taskId];
+      return spec.tasks[taskId];
     },
   
-    getAll: function getAll (taskId) {
-      return that.tasks;
+    getAll: function getAll () {
+      return spec.tasks;
     },
 
     getName: function getName () {
-      return that.name;
+      return spec.tasks;
     },
     
-    find: function find (task) {
-      return that.tasks.indexOf(task);
-    },
+/*    find: function find (task) {
+      return spec.tasks.indexOf(task);
+*/    },
     
     search: function search (pattern, flags) {
       flags = flags || 'i';
@@ -49,33 +49,33 @@ var taskList = function taskList (spec) {
       if (! pattern instanceof RegExp) {
         return [];
       } else {
-        return that.tasks.filter(function (task) {
+        return spec.tasks.filter(function (task) {
           return pattern.test(task.name) || pattern.test(task.details);
         });
       }
     }
   },
-  localItems = localStorage.getItem(that.name),
+  localItems = localStorage.getItem(spec.tasks),
   tmpTasks;
 
-  localStorage.setItem(that.name + ' [VERSION]', 1);
+  // localStorage.setItem(spec.tasks + ' [VERSION]', 1);
 
   if (localItems) {
     tmpTasks = JSON.parse(localItems);
     if (tmpTasks instanceof Array) {
-      that.tasks = tmpTasks;
+      spec.tasks = tmpTasks;
     }
   }
 
   if (typeof Array.prototype.forEach === 'function') {
     // real browser, or IE >=9
     that.forEach = function forEach (fn) {
-      that.tasks.forEach(fn);
+      spec.tasks.forEach(fn);
     };
   } else {
     // last resort - fake it
     that.forEach = function forEach (fn) {
-      var len = that.tasks.length,
+      var len = spec.tasks.length,
           i = 0;
 
       if (typeof fn !== 'function') {
@@ -83,12 +83,10 @@ var taskList = function taskList (spec) {
       }
 
       for ( ; i < len; i++) {
-        fn.call(void 0, that.tasks[i], i, that.tasks);
+        fn.call(void 0, spec.tasks[i], i, spec.tasks);
       }
     };
   }
 
   return that;
 };
-
-
